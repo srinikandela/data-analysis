@@ -46,4 +46,3 @@ errorRate = (61 + 458)/(1346+458+61+449)
 # show what was found and error rate
 
 # Organising a data analysis
-07512677065
