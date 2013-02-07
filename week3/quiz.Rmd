@@ -33,10 +33,25 @@ Question 3
 ```{r}
 library(datasets)
 data(iris)
+irisSubset <- iris[,1:4]
+hc <- hclust(dist(irisSubset))
+table(cutree(hc, h=3))
+rect.hclust(hc, h=3)
+plot(hc)
 ```
+
+4 clusters at height 3
 
 Question 4
 ----------
+
+```{r}
+pData <- read.csv("data/quiz3question4.csv")
+plot(pData$x,pData$y,pch=19,col="blue")
+kmeansObj <- kmeans(pData,centers=2)
+plot(pData$x,pData$y,col=kmeansObj$cluster,pch=19,cex=2) 
+points(kmeansObj$centers,col=1:3,pch=3,cex=3,lwd=3)
+```
 
 Question 5
 ----------
