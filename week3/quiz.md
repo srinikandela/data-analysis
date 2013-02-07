@@ -34,6 +34,9 @@ axis(side = 1, at = 1:5, labels = c("Married", "Living together/not married",
 ![plot of chunk unnamed-chunk-2](figure/unnamed-chunk-2.png) 
 
 
+* 75th income widowded ~= 75th income never married
+* median income divorced > median income widowed
+
 Question 3
 ----------
 
