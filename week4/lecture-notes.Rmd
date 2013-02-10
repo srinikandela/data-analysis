@@ -536,7 +536,10 @@ meanRatings <- tapply(movies$score,movies$rating,mean)
 points(1:4,meanRatings,col="red",pch="-",cex=5)
 ```
 
-
+```{r}
+lm1 <- lm(movies$score ~ as.factor(movies$rating)) 
+summary(lm1)
+```
 
 
 
