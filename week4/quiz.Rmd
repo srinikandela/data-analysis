@@ -1,0 +1,66 @@
+Quiz 4
+========================================================
+
+Q1
+--
+
+```{r}
+movies <- read.delim("./data/movies.txt",sep="\t",header=TRUE)
+names(movies)
+head(movies)
+plot(movies$score,movies$box.office,pch=19,col="blue")
+lm1 <- lm(movies$score ~ movies$box.office)
+lines(movies$box.office,lm1$fitted,col="red",lwd=3)
+summary(lm1)
+```
+
+Intercept: 50.07559
+Slope: 0.09676
+
+The regression coefficient is 0.09676. The interpretation is that an increase of one million dollars in box office gross is associated with a 0.09676 increase in Rotten Tomatoes Score.
+
+Q2
+--
+
+```{r}
+movies <- read.delim("./data/movies.txt",sep="\t",header=TRUE)
+plot(movies$score,movies$box.office,pch=19,col="blue")
+lm1 <- lm(movies$score ~ movies$box.office)
+lines(movies$box.office,lm1$fitted,col="red",lwd=3)
+summary(lm1)
+confint(lm1,level=0.9)
+```
+
+The 90% confidence interval for the intercept is (47.52, 52.63). If we repeated this study 100 times, we would expect our calculated interval to cover the true value on average 90% of the time.
+
+Q3
+--
+
+Q4
+--
+
+Q5
+--
+
+Q6
+--
+
+Q7
+--
+
+Q8
+--
+
+Q9
+--
+
+Q10
+---
+
+
+
+
+
+
+
+

@@ -18,7 +18,7 @@ Download data files
 # download.file("https://spark-public.s3.amazonaws.com/dataanalysis/samsungData.rda", "./data/samsungData.rda", method="curl")
 # download.file("https://spark-public.s3.amazonaws.com/dataanalysis/hunger.csv", "./data/hunger.csv", method="curl")
 # download.file("https://spark-public.s3.amazonaws.com/dataanalysis/income.csv", "./data/income.csv", method="curl")
-download.file("https://spark-public.s3.amazonaws.com/dataanalysis/movies.txt", "./data/movies.txt", method="curl")
+#download.file("https://spark-public.s3.amazonaws.com/dataanalysis/movies.txt", "./data/movies.txt", method="curl")
 ```
 
 Read data files
