@@ -36,6 +36,16 @@ The 90% confidence interval for the intercept is (47.52, 52.63). If we repeated 
 Q3
 --
 
+```{r}
+movies <- read.delim("./data/movies.txt",sep="\t",header=TRUE)
+par(mfrow=c(1,1))
+lmBoth <- lm(movies$score ~ movies$box.office + movies$running.time)
+summary(lmBoth)
+```
+running.time coeff 0.12752
+
+The coefficient is 0.12752. That means that if two movies have the same box office gross, an increase of one minute in running time is associated with an average increase of 0.12752 in score.
+
 Q4
 --
 
