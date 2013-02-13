@@ -543,12 +543,75 @@ summary(lm1)
 
 
 
+Real World
+----------
 
+Ideal data for regression:
 
+```{r}
+library(UsingR); 
+data(galton) 
+plot(galton$parent,galton$child,col="blue",pch=19)
+```
 
+points have cloud like oval shape
 
+Confounders - a variable that is correlated with both the outcome and the covariates
 
+```{r}
+download.file("http://apps.who.int/gho/athena/data/GHO/WHOSIS_000008.csv?profile=text&filt er=COUNTRY:*;SEX:*","./data/hunger.csv",method="curl")
+hunger <- read.csv("./data/hunger.csv") 
+hunger <- hunger[hunger$Sex!="Both sexes",] 
+head(hunger)
+```
 
+plot coloured by region - would get a totally different regression line for each region.
+
+```{r}
+par(mfrow=c(1,2))
+plot(hunger$Year,hunger$Numeric,col=as.numeric(hunger$WHO.region),pch=19) 
+plot(1:10,type="n",xaxt="n",yaxt="n",xlab="",ylab="") 
+legend(1,10,col=unique(as.numeric(hunger$WHO.region)),legend=unique(hunger$WHO.region),pch=19)
+```
+
+region correlated with year
+
+large f value and small pvalue suggest a strong correlation
+
+```{r}
+anova(lm(hunger$Year ~ hunger$WHO.region))
+```
+
+region correlated with hunger
+
+```{r}
+anova(lm(hunger$Numeric ~ hunger$WHO.region))
+```
+
+including region - a complicated interaction
+
+```{r}
+plot(hunger$Year,hunger$Numeric,pch=19,col=as.numeric(hunger$WHO.region))
+lmRegion <- lm(hunger$Numeric ~ hunger$Year + hunger$WHO.region + hunger$Year*hunger$WHO.region ) 
+abline(c(lmRegion$coeff[1] + lmRegion$coeff[6],lmRegion$coeff[2]+ lmRegion$coeff[12]),col=5,lwd=3)
+```
+
+income data
+
+```{r}
+download.file("http://archive.ics.uci.edu/ml/machine-learning-databases/adult/adult.data","./data/income.csv") 
+incomeData <- read.csv("./data/income.csv",header=FALSE)
+income <- incomeData[,3]
+age <- incomeData[,1]
+```
+
+```{r}
+par(mfrow=c(1,4)) 
+smoothScatter(age,income) 
+hist(income,col="blue",breaks=100) 
+hist(log(income+1),col="blue",breaks=100) 
+smoothScatter(age,log(income+1))
+```
 
 
 

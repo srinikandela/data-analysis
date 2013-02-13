@@ -1,0 +1,35 @@
+Exploration
+========================================================
+
+Obtain data from https://spark-public.s3.amazonaws.com/dataanalysis/loansData.csv
+
+```{r}
+url <- "https://spark-public.s3.amazonaws.com/dataanalysis/loansData.csv"
+loansFile = "loansData.csv"
+# download.file(url, loansFile, method="curl")
+```
+
+Load csv into data.frame.
+
+```{r}
+loans <- read.csv(loansFile)
+names(loans)
+head(loans)
+```
+
+2500 obs. of 14 variables
+
+FICO.Range is expressed as a range, e.g. 695-699
+Employment.Length values: < 1 year, 1 year, ...., 10 years, 10+ years
+
+Clean data
+
+```{r}
+# convert Interest.Rate to numeric
+loans$Interest.Rate <- as.numeric(sub("%", "", loans$Interest.Rate))
+# convert Debt.To.Income.Ration to numeric
+loans$Debt.To.Income.Ratio <- as.numeric(sub("%", "", loans$Debt.To.Income.Ratio))
+head(loans)
+```
+
+

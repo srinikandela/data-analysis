@@ -42,6 +42,7 @@ par(mfrow=c(1,1))
 lmBoth <- lm(movies$score ~ movies$box.office + movies$running.time)
 summary(lmBoth)
 ```
+
 running.time coeff 0.12752
 
 The coefficient is 0.12752. That means that if two movies have the same box office gross, an increase of one minute in running time is associated with an average increase of 0.12752 in score.
@@ -49,24 +50,100 @@ The coefficient is 0.12752. That means that if two movies have the same box offi
 Q4
 --
 
+```{r}
+movies <- read.delim("./data/movies.txt",sep="\t",header=TRUE)
+```
+
+running time is correlated with score
+
+```{r}
+anova(lm(movies$score ~ movies$running.time))
+```
+
+running time is correlated with box office gross
+
+```{r}
+anova(lm(movies$box.office ~ movies$running.time))
+```
+
+```{r}
+par(mfrow=c(1,2))
+plot(movies$running.time,movies$box.office,pch=19,col="blue")
+plot(movies$running.time,movies$score,pch=19,col="blue")
+```
+
+Yes running time is a confounder. It is correlated both with the Rotten Tomatoes score and the box office gross.
+
 Q5
 --
+
+Outliers are present - data points that do not appear to follow the pattern of the other data points
+
+In this case > 175 running time
+
+```{r}
+par(mfrow=c(1,2))
+movies <- read.delim("./data/movies.txt",sep="\t",header=TRUE)
+lmBoth <- lm(movies$score ~ movies$box.office + movies$running.time)
+plot(movies$score,movies$running.time,pch=19,col="blue")
+# remove the outliers
+movies2 = movies[movies$running.time < 175,]
+lmBoth2 <- lm(movies2$score ~ movies2$box.office + movies2$running.time)
+plot(movies2$score,movies2$running.time,pch=19,col="blue")
+summary(lmBoth)
+summary(lmBoth2)
+```
+
+Yes there are two outliers. After removing them and refitting the regression line, the running time coefficient has a larger magnitude and is more statistically significant.
 
 Q6
 --
 
+```{r}
+par(mfrow=c(1,2))
+movies <- read.delim("./data/movies.txt",sep="\t",header=TRUE)
+lmBoth <- lm(movies$score ~ movies$box.office + movies$running.time)
+summary(lmBoth)
+```
+
+0.0187
+
+The P-value is 0.0187. It is the probability there is no relationship between Rotten Tomatoes score and running time for a fixed box office gross.
+
 Q7
 --
+
+```{r}
+par(mfrow=c(1,1))
+movies <- read.delim("./data/movies.txt",sep="\t",header=TRUE)
+lmBoth <- lm(movies$score ~ movies$rating + movies$running.time + movies$running.time*movies$rating)
+summary(lmBoth)
+```
+
+-0.6901
 
 Q8
 --
 
+-0.6901
+
 Q9
 --
+
+```{r}
+data(warpbreaks)
+head(warpbreaks)
+lm1 <- lm(warpbreaks$breaks ~ as.factor(warpbreaks$tension))
+summary(lm1)
+confint(lm1, level=0.95)
+```
+
+-17.95042 -2.049581
 
 Q10
 ---
 
+There is a statistically significant association. We may be skeptical this association could be used to reduce autism rates, since there are many possible explanations for the association that do not involve a direct relationship between organic foods and autism.
 
 
 
