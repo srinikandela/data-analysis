@@ -190,7 +190,207 @@ loansFile = &quot;loansData.csv&quot;
 <p>Load csv into data.frame.</p>
 
 <pre><code class="r">loans &lt;- read.csv(loansFile)
+names(loans)
 </code></pre>
+
+<pre><code>##  [1] &quot;Amount.Requested&quot;               &quot;Amount.Funded.By.Investors&quot;    
+##  [3] &quot;Interest.Rate&quot;                  &quot;Loan.Length&quot;                   
+##  [5] &quot;Loan.Purpose&quot;                   &quot;Debt.To.Income.Ratio&quot;          
+##  [7] &quot;State&quot;                          &quot;Home.Ownership&quot;                
+##  [9] &quot;Monthly.Income&quot;                 &quot;FICO.Range&quot;                    
+## [11] &quot;Open.CREDIT.Lines&quot;              &quot;Revolving.CREDIT.Balance&quot;      
+## [13] &quot;Inquiries.in.the.Last.6.Months&quot; &quot;Employment.Length&quot;
+</code></pre>
+
+<pre><code class="r">head(loans)
+</code></pre>
+
+<pre><code>##       Amount.Requested Amount.Funded.By.Investors Interest.Rate
+## 81174            20000                      20000         8.90%
+## 99592            19200                      19200        12.12%
+## 80059            35000                      35000        21.98%
+## 15825            10000                       9975         9.99%
+## 33182            12000                      12000        11.71%
+## 62403             6000                       6000        15.31%
+##       Loan.Length       Loan.Purpose Debt.To.Income.Ratio State
+## 81174   36 months debt_consolidation               14.90%    SC
+## 99592   36 months debt_consolidation               28.36%    TX
+## 80059   60 months debt_consolidation               23.81%    CA
+## 15825   36 months debt_consolidation               14.30%    KS
+## 33182   36 months        credit_card               18.78%    NJ
+## 62403   36 months              other               20.05%    CT
+##       Home.Ownership Monthly.Income FICO.Range Open.CREDIT.Lines
+## 81174       MORTGAGE           6542    735-739                14
+## 99592       MORTGAGE           4583    715-719                12
+## 80059       MORTGAGE          11500    690-694                14
+## 15825       MORTGAGE           3833    695-699                10
+## 33182           RENT           3195    695-699                11
+## 62403            OWN           4892    670-674                17
+##       Revolving.CREDIT.Balance Inquiries.in.the.Last.6.Months
+## 81174                    14272                              2
+## 99592                    11140                              1
+## 80059                    21977                              1
+## 15825                     9346                              0
+## 33182                    14469                              0
+## 62403                    10391                              2
+##       Employment.Length
+## 81174          &lt; 1 year
+## 99592           2 years
+## 80059           2 years
+## 15825           5 years
+## 33182           9 years
+## 62403           3 years
+</code></pre>
+
+<p>2500 obs. of 14 variables</p>
+
+<p>FICO.Range is expressed as a range, e.g. 695-699
+Employment.Length values: &lt; 1 year, 1 year, &hellip;., 10 years, 10+ years</p>
+
+<p>Clean data</p>
+
+<pre><code class="r">lowercols &lt;- function(df) {
+    colnames(df) &lt;- tolower(colnames(df))
+}
+colnames(loans) &lt;- lowercols(loans)
+fico.split &lt;- strsplit(as.character(loans$fico.range), &quot;\\-&quot;)
+loans &lt;- transform(loans, fico.low = as.numeric(sapply(fico.split, &quot;[[&quot;, 1)), 
+    fico.high = as.numeric(sapply(fico.split, &quot;[[&quot;, 2)))
+# convert Interest.Rate to numeric
+loans$interest.rate &lt;- as.numeric(sub(&quot;%&quot;, &quot;&quot;, loans$interest.rate))
+# convert Debt.To.Income.Ration to numeric
+loans$debt.to.income.ratio &lt;- as.numeric(sub(&quot;%&quot;, &quot;&quot;, loans$debt.to.income.ratio))
+head(loans)
+</code></pre>
+
+<pre><code>##       amount.requested amount.funded.by.investors interest.rate
+## 81174            20000                      20000          8.90
+## 99592            19200                      19200         12.12
+## 80059            35000                      35000         21.98
+## 15825            10000                       9975          9.99
+## 33182            12000                      12000         11.71
+## 62403             6000                       6000         15.31
+##       loan.length       loan.purpose debt.to.income.ratio state
+## 81174   36 months debt_consolidation                14.90    SC
+## 99592   36 months debt_consolidation                28.36    TX
+## 80059   60 months debt_consolidation                23.81    CA
+## 15825   36 months debt_consolidation                14.30    KS
+## 33182   36 months        credit_card                18.78    NJ
+## 62403   36 months              other                20.05    CT
+##       home.ownership monthly.income fico.range open.credit.lines
+## 81174       MORTGAGE           6542    735-739                14
+## 99592       MORTGAGE           4583    715-719                12
+## 80059       MORTGAGE          11500    690-694                14
+## 15825       MORTGAGE           3833    695-699                10
+## 33182           RENT           3195    695-699                11
+## 62403            OWN           4892    670-674                17
+##       revolving.credit.balance inquiries.in.the.last.6.months
+## 81174                    14272                              2
+## 99592                    11140                              1
+## 80059                    21977                              1
+## 15825                     9346                              0
+## 33182                    14469                              0
+## 62403                    10391                              2
+##       employment.length fico.low fico.high
+## 81174          &lt; 1 year      735       739
+## 99592           2 years      715       719
+## 80059           2 years      690       694
+## 15825           5 years      695       699
+## 33182           9 years      695       699
+## 62403           3 years      670       674
+</code></pre>
+
+<p>fico is left skewed</p>
+
+<pre><code class="r">par(mfrow = c(1, 2))
+hist(loans$fico.low, col = &quot;blue&quot;, breaks = 100)
+hist(log(loans$fico.low + 1), col = &quot;blue&quot;, breaks = 100)
+</code></pre>
+
+<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAfgAAAH4CAMAAACR9g9NAAAAq1BMVEX9/v0AAAAAADkAAGUAAP8AOTkAOWUAOY8AZo8AZrU5AAA5ADk5AGU5OY85ZmU5ZrU5j485j9plAABlADllAGVlOQBlOTllOY9lZjllZmVlj49ltbVltdpltf2POQCPOTmPOWWPZgCPZo+Pj2WPtY+P27WP29qP2/21ZgC1Zjm1jzm1tWW124+1/rW1/tq1/v3ajzna/rXa/tra/v39tWX924/9/rX9/tr9/v35BuTMAAAAOXRSTlP//////////////////////////////////////////////////////////////////////////wA6rGVAAAAACXBIWXMAAAsSAAALEgHS3X78AAARcklEQVR4nO3dC3ujNhqG4ZJkmybTtLVndts9ONNOu7W33W48jQ/6/79skQAfCBiQJZD0Pe/Vq04AYT7dHD3gfKGIyHwx9QKQaQK80AAvNMALDfBCA7zQAC80wAsN8EIDvNAALzTACw3wQgO80AAvNMALDfBCA7zQAC80wAsN8EIDvNAALzTAC0188OvZ1EswWVyWPgR+N799UWr/fPtS/FRltbhiAbaP2c3yMPMey5Bl969Fs3+3Nek5r+ZmI9e3vllOUrod/NngVXZNx1St+y2xLj7LHjre9Gr4xiW0S0d9u/nDiKWf1HbFFp+vednty/65WJx1/jIz885u/5jfv+6fb37I1/VNPjhf4zfZV/nwl3yiaqGL6U1rvRqXM6/mUjbL3+t3/SaqfLN8+P1v381v/2eafdZN9BxMNVXT2rxMrev8h93cvE8Y9VVzyQcsRiz9CL+3hy/WwPs/i45ZZcX6aCr9y6PumGIBzUSvm6xK+c7l9LWOqeZSzruYyemA7eP9bzOl9ofqiylOmqr6vHTXrvLXTdZ1hByvvpO55MbjlW4NX9WmZ58vyGtZ4yJfK00BN8vto1nLzII/HPtzk+kG2UJPoocdpj/bFR6HlgPymcz0qv568mbFyr0qtxTzfvkvb5qeLNFsN/97vjUW44Ko7zAXsy2OVfo6O1lD7OHNb3oF0guyMbPL1zDzw25erstlI90xD2U5xdDD9GcdcxxaNis3CN1B1cak1/O8J6rqq5X5pGltXvlRdPvul3fLVeeBdLz6DnMxqmOVfgX8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" alt="plot of chunk unnamed-chunk-4"/> </p>
+
+<p>Strong correlation between interest rate and fico
+Low fico -&gt; high interest rate
+Number of outliers with higher rates</p>
+
+<pre><code class="r">par(mfrow = c(1, 2))
+plot(loans$interest.rate ~ loans$fico.range)
+lmLow &lt;- lm(loans$interest.rate ~ loans$fico.low)
+plot(loans$interest.rate ~ loans$fico.low)
+lines(loans$fico.low, lmLow$fitted, col = &quot;red&quot;, lwd = 3)
+</code></pre>
+
+<p><img src="data:image/png;base64,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" alt="plot of chunk unnamed-chunk-5"/> </p>
+
+<pre><code class="r">summary(lmLow)
+</code></pre>
+
+<pre><code>## 
+## Call:
+## lm(formula = loans$interest.rate ~ loans$fico.low)
+## 
+## Residuals:
+##    Min     1Q Median     3Q    Max 
+## -7.988 -2.136 -0.455  1.837 10.195 
+## 
+## Coefficients:
+##                Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)    72.76547    1.18915    61.2   &lt;2e-16 ***
+## loans$fico.low -0.08457    0.00168   -50.3   &lt;2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1 
+## 
+## Residual standard error: 2.95 on 2498 degrees of freedom
+## Multiple R-squared: 0.503,   Adjusted R-squared: 0.503 
+## F-statistic: 2.53e+03 on 1 and 2498 DF,  p-value: &lt;2e-16
+</code></pre>
+
+<p>High F value low P -&gt; strong correlation</p>
+
+<pre><code class="r">anova(lmLow)
+</code></pre>
+
+<pre><code>## Analysis of Variance Table
+## 
+## Response: loans$interest.rate
+##                  Df Sum Sq Mean Sq F value Pr(&gt;F)    
+## loans$fico.low    1  21937   21937    2527 &lt;2e-16 ***
+## Residuals      2498  21689       9                   
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+</code></pre>
+
+<p>colnames(loans)
+par(mfrow = c(1, 1))</p>
+
+<p>explorereg &lt;- function(df, loanscolumn) {
+  plot(df$interest.rate ~ loanscolumn)
+  lm1 &lt;- lm(df$interest.rate ~ df$fico.low + loanscolumn)
+  summary(lm1)
+}</p>
+
+<p>explorereg(loans$debt.to.income.ratio)
+explorereg(loans, loans$state)</p>
+
+<p>Some income outliers
+Strong correlations when fico is fixed for:
+  monthly.income
+  employment.length
+  inquiries.in.the.last.6.months</p>
+
+<p>summary(loans$monthly.income)
+hist(loans$monthly.income, col=&ldquo;blue&rdquo;, breaks=100)
+hist(loans$monthly.income[loans$monthly.income &lt; 3e+04], col=&ldquo;blue&rdquo;, breaks=100)
+loans.clean &lt;- loans[loans$monthly.income &lt; 3e+04,]
+explorereg(loans.clean, loans.clean$monthly.income)  # ***
+explorereg(loans, loans$monthly.income)  # ***
+explorereg(loans,loans$fico.high)
+explorereg(loans,loans$home.ownership) # RENT *
+explorereg(loans,loans$open.credit.lines)
+explorereg(loans,loans$revolving.credit.balance) # .
+explorereg(loans, loans$employment.length) # 10+ years ***
+explorereg(loans, loans$inquiries.in.the.last.6.months) # ***
+colnames(loans)</p>
 
 </body>
 
